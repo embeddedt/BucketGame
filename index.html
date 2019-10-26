@@ -1,0 +1,30 @@
+<!doctype html>
+
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"/>
+
+        <title>game</title>
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="styles.css">
+
+    </head>
+
+    <body>
+        <!-- The root React component is mounted in this div. Don't remove it. -->
+        <div id="game-container"></div>
+        <!-- import external libs -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.10.2/umd/react.development.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.10.2/umd/react-dom.development.js"></script>
+        <!-- polyfill some things for IE -->
+        <script src="polyfills.js"></script>
+        <!-- bring in game-specific overrides (REPLACE THIS FILE) -->
+        <script src="colors.js"></script>
+        <!-- bring in the core game code after the overrides -->
+        <script src="core_script_compiled.js"></script>
+    </body>
+
+</html>
