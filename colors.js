@@ -5,10 +5,6 @@
  * if you need to support Internet Explorer.
  */
 
-
-
-
-
 /* Colors must start with a pound sign otherwise they will not be treated as colors, but just as different types.
  *
  * An example of this behavior can be seen with NOUN and NOT_NOUN, where the words won't actually change color
@@ -26,6 +22,13 @@ var NOUN = 'noun';
 var NOT_NOUN = 'notnoun';
 
 var dinosaur = 'toy.png';
+var phone = 'toy-mobile-phone.png';
+var train = 'train.png';
+var teddy = 'pitr_teddy_bear_icon.png';
+var brick = 'brick.png';
+var helicopter = 'helicopter.png';
+var car = 'toy_car.png';
+var duck = 'Rubber_Duck.png';
 
 /**
  * Create an image item by taking a grayscale image and recoloring it to the
@@ -78,9 +81,13 @@ function makeWord(word, color) {
 
 window.globalGameInformation = {
     /* Self-explanatory */
-    title: "Colors Game",
+    title: "Color Conundrum",
     directions: "The floor's a mess! Can you put the toys away in the right buckets? Click on a toy to put it away!",
-    background: 'bkgd.svg',
+    dialogBackground: "Bedding.svg",
+    background: "https://www.transparenttextures.com/patterns/arabesque.png",
+    backgroundOpacity: 1,
+    backgroundColor: '#dec1e3',
+    /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
     /* Specifies the bucket image */
     bucketImg: objectify(
         [ RED, 'red_bucket.svg' ],
@@ -94,28 +101,38 @@ window.globalGameInformation = {
     colorChoices: objectify(
         [ RED, 'red' ],
         [ YELLOW, 'yellow' ],
-        [ BLUE, 'blue' ]
+        [ BLUE, 'blue' ],
+        [ GREEN, 'green' ]
     ),
     /* The string to append after 'Click on the {color name here}'. Note the leading space in this example. */
     itemsPlural: ' toys',
     /*
      * The items to appear at the bottom of the screen.
      *
-     * Use one of the three makeXXX functions to create an item. a 
+     * Use one of the three makeXXX functions to create an item.
      */
     items: [
-        makeRecoloredImage(dinosaur, BLUE),
-        makeRecoloredImage(dinosaur, BLUE),
-        makeRecoloredImage(dinosaur, BLUE),
-        makeRecoloredImage(dinosaur, BLUE),
-        makeRecoloredImage(dinosaur, RED),
-        makeRecoloredImage(dinosaur, RED),
-        makeRecoloredImage(dinosaur, RED),
-        makeRecoloredImage(dinosaur, RED),
+        makeRecoloredImage(phone, BLUE),
+        makeRecoloredImage(helicopter, BLUE),
+        makeRecoloredImage(teddy, BLUE),
+        makeRecoloredImage(dinosaur, GREEN),
+        makeRecoloredImage(brick, BLUE),
+        makeRecoloredImage(phone, GREEN),
+        makeRecoloredImage(helicopter, BLUE),
+        makeRecoloredImage(phone, RED),
+        makeRecoloredImage(train, GREEN),
+        makeRecoloredImage(car, RED),
+        makeRecoloredImage(helicopter, RED),
+        makeRecoloredImage(teddy, GREEN),
+        makeRecoloredImage(brick, RED),
+        makeRecoloredImage(train, RED),
+        makeRecoloredImage(car, GREEN),
+        makeRecoloredImage(teddy, GREEN),
+
+        makeNonRecoloredImage('yellow_teddy_bear_icon.png', YELLOW),
+        makeRecoloredImage(phone, YELLOW),
         makeNonRecoloredImage('yellow_dinosaur.png', YELLOW),
-        makeNonRecoloredImage('yellow_dinosaur.png', YELLOW),
-        makeNonRecoloredImage('yellow_dinosaur.png', YELLOW),
-        makeNonRecoloredImage('yellow_dinosaur.png', YELLOW)
+        makeNonRecoloredImage(duck, YELLOW)
     ]
     // END COLOR GAME EXAMPLE
     // BEGIN NOUN/NOTNOUN GAME EXAMPLE

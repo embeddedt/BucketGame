@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 860 836"
+   version="1.1"
+   id="svg36"
+   sodipodi:docname="train.svg"
+   inkscape:export-filename="/home/tt/ubuntu/VSCodeProjects/BucketGame/train.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   width="860"
+   height="836"
+   inkscape:version="0.92.4 (unknown)">
+  <defs
+     id="defs40">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Greyscale"
+       id="filter849">
+      <feColorMatrix
+         values="0.21 0.72 0.072 0 0 0.21 0.72 0.072 0 0 0.21 0.72 0.072 0 0 0 0 0 1 0 "
+         id="feColorMatrix847" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     id="namedview38"
+     showgrid="false"
+     fit-margin-top="100"
+     fit-margin-left="100"
+     fit-margin-right="100"
+     fit-margin-bottom="100"
+     inkscape:zoom="1"
+     inkscape:cx="440"
+     inkscape:cy="418"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg36" />
+  <desc
+     id="desc2">Train - inspired by openclipart.org &quot;Toy train icon&quot;
+    Scripted to start/stop the wheels when clicking anywhere on the train.
+    Easily scaled and positioned as desired. Scripting can be removed.
+    From the book, I Love to Color, Play, &amp; Learn, by Jay Nick.
+    I Love to Color, Play, &amp; Learn is as an eBook from cattocreations.com
+    Written by Jay Nick
+    Handcoding SVG since 2001
+    Author of eBook, Learn SVG Interactively, published by Catto Creations, LLC
+    http://www.jaynick.com
+    I Love to Color, Play, &amp; Learn is published by Catto Creations, LLC
+    Catto Creations mission is Family, Literacy, and Enrichment
+    Visit http://www.cattocreations.com for award winning children's eBooks
+    I Love to Color, Play, &amp; Learn and other free ePub3 eBooks at http://www.cattocreations.com/ePub3.html</desc>
+  <script
+     type="application/x-javascript"
+     id="script4">var Train = new function()
+    {
+      var steps = 20;
+      var step=1;
+      var angle = -5.5;
+      var angleinc = (2.5+5.5)/steps;
+      var width = 375;
+      var widthinc = 70*2/steps;
+      var timerID=null;
+      var timerInc=300;
+      var started=false;
+      window.addEventListener(&quot;load&quot;, function(e) { init(); }, false);
+      function init()
+      {
+        var node = document.getElementById(&quot;Train&quot;);
+        node.addEventListener(&quot;click&quot;, function(e) { e.preventDefault(); toggle(); }, false);
+      }
+      function toggle()
+      {
+        if(!started) {Start(); started=true;}
+        else {Stop(); started=false;}
+      }
+      /**************************************************
+      * Start the Train 
+      **************************************************/
+      function Start()
+      {
+        try
+        {
+          if(step&gt;steps/2) angle -= angleinc*2;
+          else angle += angleinc*2;
+          var node = document.getElementById(&quot;couplingrod&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(&quot;+angle+&quot;,80,483)&quot;);
+          w = width + 25*Math.sin(-2*Math.PI*(step/steps));
+          node.setAttribute(&quot;width&quot;,w);
+          var deg = (step/steps)*-360;
+          node = document.getElementById(&quot;spoke1&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(&quot;+deg+&quot;,100,490)&quot;);
+          node = document.getElementById(&quot;spoke2&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(&quot;+deg+&quot;,270,490)&quot;);
+          node = document.getElementById(&quot;spoke3&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(&quot;+deg+&quot;,450,480)&quot;);
+          step++;
+          if(step&gt;steps) {step=1; if(timerInc&gt;100) timerInc -= 50;}
+          timerID = window.setTimeout(Start,timerInc);
+        }
+        catch(e) {}        
+      }
+      /**************************************************
+      * Stop the Train 
+      **************************************************/
+      function Stop()
+      {
+        try
+        {
+          clearTimeout(timerID); 
+          timerInc=300;
+          step=1;      
+          angle = -5.5;
+          width = 375;
+          var node = document.getElementById(&quot;couplingrod&quot;);
+          node.setAttribute(&quot;width&quot;,375);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(-5.5,80,483)&quot;);
+          node = document.getElementById(&quot;spoke1&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(0)&quot;);
+          node = document.getElementById(&quot;spoke2&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(0)&quot;);
+          node = document.getElementById(&quot;spoke3&quot;);
+          node.setAttribute(&quot;transform&quot;,&quot;rotate(0)&quot;);
+        }
+        catch(e) {}        
+      }
+    }();</script>
+  <style
+     type="text/css"
+     id="style6">#Train {stroke:black;stroke-width:14px;}
+    #frame {fill:gray;stroke-width:15px;}
+    #engine {fill:lime;}
+    #stack {fill:blue;}
+    #roof {fill:red;}
+    #cab {fill:yellow;}
+    #window {fill:blue;}
+    #wheels {fill:red;}
+    .wheel1 {stroke:#333333;stroke-width:25px;}
+    .wheel2 {stroke:#333333;stroke-width:15px;}
+    #spoke1 {stroke:#333333;stroke-width:25px;stroke-dasharray:22,21.08}
+    #spoke2 {stroke:#333333;stroke-width:21px;stroke-dasharray:23,23.02}
+    #spoke3 {stroke:#333333;stroke-width:25px;stroke-dasharray:28,28.02}
+    #couplingrod {fill:#666666;stroke:none;}</style>
+  <g
+     id="g32"
+     style="filter:url(#filter849)"
+     transform="translate(145,133)">
+    <g
+       id="Train"
+       transform="translate(10)"
+       style="stroke:#000000;stroke-width:14px">
+      <rect
+         id="frame"
+         rx="30"
+         height="100"
+         width="550"
+         y="389"
+         x="0"
+         style="fill:#808080;stroke-width:15px" />
+      <rect
+         id="engine"
+         rx="30"
+         height="150"
+         width="350"
+         y="240"
+         x="0"
+         style="fill:#00ff00" />
+      <rect
+         id="stack"
+         rx="20"
+         height="120"
+         width="70"
+         y="120"
+         x="50"
+         style="fill:#0000ff" />
+      <rect
+         id="roof"
+         rx="20"
+         height="60"
+         width="270"
+         y="20"
+         x="280"
+         style="fill:#ff0000" />
+      <rect
+         id="cab"
+         rx="30"
+         height="310"
+         width="200"
+         y="80"
+         x="350"
+         style="fill:#ffff00" />
+      <rect
+         id="window"
+         rx="20"
+         height="100"
+         width="100"
+         y="130"
+         x="400"
+         style="fill:#0000ff" />
+      <g
+         id="wheels"
+         style="fill:#ff0000">
+        <circle
+           cy="490"
+           cx="100"
+           r="60"
+           class="wheel1"
+           id="circle14"
+           style="stroke:#333333;stroke-width:25px" />
+        <circle
+           id="spoke1"
+           cy="490"
+           cx="100"
+           r="35"
+           style="stroke:#333333;stroke-width:25px;stroke-dasharray:22, 21.08" />
+        <circle
+           cy="490"
+           cx="100"
+           r="15"
+           class="wheel2"
+           id="circle17"
+           style="stroke:#333333;stroke-width:15px" />
+        <circle
+           cy="490"
+           cx="270"
+           r="60"
+           class="wheel1"
+           id="circle19"
+           style="stroke:#333333;stroke-width:25px" />
+        <circle
+           id="spoke2"
+           cy="490"
+           cx="270"
+           r="37"
+           style="stroke:#333333;stroke-width:21px;stroke-dasharray:23, 23.02" />
+        <circle
+           cy="490"
+           cx="270"
+           r="19"
+           class="wheel2"
+           id="circle22"
+           style="stroke:#333333;stroke-width:15px" />
+        <circle
+           cy="480"
+           cx="450"
+           r="70"
+           class="wheel1"
+           id="circle24"
+           style="stroke:#333333;stroke-width:25px" />
+        <circle
+           id="spoke3"
+           cy="480"
+           cx="450"
+           r="45"
+           style="stroke:#333333;stroke-width:25px;stroke-dasharray:28, 28.02" />
+        <circle
+           cy="480"
+           cx="450"
+           r="25"
+           class="wheel2"
+           id="circle27"
+           style="stroke:#333333;stroke-width:15px" />
+      </g>
+      <rect
+         id="couplingrod"
+         rx="5"
+         transform="rotate(-5.5,80,483)"
+         height="14"
+         width="375"
+         y="483"
+         x="80"
+         style="fill:#666666;stroke:none" />
+    </g>
+  </g>
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Scripted Toy Train</dc:title>
+        <dc:date>2013-09-25T02:59:07</dc:date>
+        <dc:description>From the eBook, I Love to Color, Play, and Learn. Scripted to start/stop the wheels when clicking on the SVG image. SVG code can be inserted into an SVG image then scaled and positioned where desired.</dc:description>
+        <dc:source>https://openclipart.org/detail/183877/scripted-toy-train-by-jaynick-183877</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>JayNick</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>door</rdf:li>
+            <rdf:li>handcoded</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>javascript</rdf:li>
+            <rdf:li>scripted</rdf:li>
+            <rdf:li>shapes</rdf:li>
+            <rdf:li>toy</rdf:li>
+            <rdf:li>train</rdf:li>
+            <rdf:li>wheels</rdf:li>
+            <rdf:li>window</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

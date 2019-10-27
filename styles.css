@@ -13,11 +13,24 @@ html, body, #game-container {
     margin: 0;
     padding: 0;
 }
-
 .bucket-main {
     width: 100%;
     max-width: 100%;
     min-height: 100%;
+    position: relative;
+}
+.game-background {
+    /*
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
 .bucket-toys {
