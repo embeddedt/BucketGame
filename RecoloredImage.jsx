@@ -92,7 +92,7 @@ class RecoloredImage extends React.Component {
         return { width: parseFloat(style.width), height: parseFloat(style.height) };
     }
     updateCanvas() {
-        if(!this.allowCanvasUpdates)
+        if(!this.allowCanvasUpdates || !this.props.followResize)
             return;
         this.allowCanvasUpdates = false;
         let img = new Image();

@@ -84,10 +84,10 @@ window.globalGameInformation = {
     title: "Color Conundrum",
     directions: "The floor's a mess! Can you put the toys away in the right buckets? Click on a toy to put it away!",
     dialogBackground: "Bedding.svg",
-    background: "https://www.transparenttextures.com/patterns/arabesque.png",
+    background: "brick-wall.png",
     backgroundOpacity: 1,
-    backgroundColor: '#dec1e3',
-    /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+    backgroundColor: '#3b1500',
+    floorBackground: 'foam.svg',
     /* Specifies the bucket image */
     bucketImg: objectify(
         [ RED, 'red_bucket.svg' ],

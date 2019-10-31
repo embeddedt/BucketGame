@@ -9,6 +9,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
+import Tether from 'tether';
 
 /**
  * Shuffles array in place. ES6 version
@@ -68,23 +69,74 @@ function splitImage(imgVal, wantedColor) {
     
     return obj;
 }
+var globalBucket;
+const TRANSITION_MS = 1000;
 function Item(props) {
-    if(!props.doDisplay)
-        return <div className="toy toy-hidden"></div>;
+    const [ isGone, setGone ] = React.useState(false);
+    const [ currentTether, setTether ] = React.useState(null);
+    const buttonRef = React.useRef(null);
+    React.useEffect(() => {
+        if(isGone)
+            return;
+        if(currentTether == null && !props.doDisplay) {
+            console.log(globalBucket);
+            const rect = buttonRef.current.getBoundingClientRect();
+            console.log(rect);
+            const next = buttonRef.current.nextSibling;
+            const div = document.createElement("div");
+            div.classList.add("toy");
+            buttonRef.current.parentNode.insertBefore(div, next);
+            const oldParent = buttonRef.current.parentNode;
+            document.body.appendChild(buttonRef.current);
+            buttonRef.current.style.position = 'absolute';
+            buttonRef.current.style.top = buttonRef.current.style.left = '0px';
+            let top = parseFloat(rect.top);
+            let left = parseFloat(rect.left);
+            buttonRef.current.style.transition = 'all ' + TRANSITION_MS + 'ms linear';
+            buttonRef.current.style.transform = `translateX(${left}px) translateY(${top}px) translateZ(0px)`;
+            const tether = new Tether({
+                element: buttonRef.current,
+                target: globalBucket,
+                attachment: 'center center',
+                targetAttachment: 'top center'
+            });
+            setTether(tether);
+            var hasCompleted = false;
+            const fn = (function onComplete() {
+                if(hasCompleted)
+                    return;
+                else
+                    hasCompleted = true;
+                console.log("completion fired");
+                buttonRef.current.removeEventListener('transitionend', fn);
+                buttonRef.current.style.transition = '';
+                div.parentNode.removeChild(div);
+                oldParent.insertBefore(buttonRef.current, next);
+                setGone(true);
+                if(typeof props.onMovedToBucket == 'function')
+                    props.onMovedToBucket();
+            }).bind(this);
+            buttonRef.current.addEventListener('transitionend', fn);
+            setTimeout(fn, TRANSITION_MS*2);
+        } else if(currentTether != null && props.doDisplay) {
+            currentTether.destroy();
+            setTether(null);
+        }
+    }, [props.doDisplay, isGone]);
+    if(isGone)
+        return <div class="toy"></div>;
     /* Figure out what type of item this is */
     const item = props.item;
     let itemComponent, imgInfo = null;
     if(item.type == 'image') {
         imgInfo = splitImage(item.value);
-        itemComponent = <Toy {...imgInfo}/>;
+        itemComponent = <Toy followResize={props.doDisplay} {...imgInfo}/>;
     } else if(item.type == 'text') {
         itemComponent = <span style={{color: item.value.color, fontSize: '2rem'}}>{item.value.string}</span>;
     }
-    return <ButtonBase style={{
-        transform: `translate(${props.xOffset}%, ${props.yOffset}%)`
-    }} disableRipple={true} disabled={props.disabled} className="toy toy-button" onClick={props.onClick}>{itemComponent}</ButtonBase>;
+    return <ButtonBase ref={buttonRef} disableRipple={true} disabled={props.disabled || !props.doDisplay} className={"toy toy-button" + (props.doDisplay ? "" : " toy-inbucket")} onClick={props.onClick}>{itemComponent}</ButtonBase>;
 }
-const Bucket = (props) => <div className="bucket"><img {...splitImage(window.globalGameInformation.bucketImg[props.color])} {...props} /><span className="bucket-number">{props.size}</span></div>;
+const Bucket = React.forwardRef((props, ref) => <div className="bucket" ref={ref}><img {...splitImage(window.globalGameInformation.bucketImg[props.color])} {...props} /><span className="bucket-number">{props.size}</span></div>);
 
 /* Game state machine */
 const AppStates = {
@@ -103,6 +155,21 @@ function Background(props) {
         opacity: window.globalGameInformation.backgroundOpacity
     }}></div>;
 }
+function ToyRoomFloor(props) {
+    return <div className="toy-floor">
+        <div className="real-toy-floor">
+            <div className="tiles-container">
+                {(function() {
+                    var tiles = [];
+                    for(var i = 0; i < 40; i++) {
+                        tiles.push(<div key={i}><div></div></div>);
+                    }
+                    return tiles;
+                })()}
+            </div>
+        </div>
+    </div>;
+}
 class ClassApp extends React.Component {
     constructor(props) {
         super(props);
@@ -114,7 +181,7 @@ class ClassApp extends React.Component {
             itemXOffsets[i] = getRandomArbitrary(-maxOffset, maxOffset);
             itemYOffsets[i] = getRandomArbitrary(-maxOffset, maxOffset);
         }
-        this.state = { itemXOffsets, itemYOffsets, transitioning: false, processing: false, stateMachine: AppStates.INFORMATION, finishedItemIndexes: [], incorrectSound: new Audio("incorrect.mp3"), correctSound: new Audio("correct.mp3") };
+        this.state = { trueLength: 0, itemXOffsets, itemYOffsets, transitioning: false, processing: false, stateMachine: AppStates.INFORMATION, finishedItemIndexes: [], incorrectSound: new Audio("incorrect.mp3"), correctSound: new Audio("correct.mp3") };
     }
     checkIfReachedEndOfColor(cb) {
         var numOfTotalChoicesForCurrentColor = 0;
@@ -124,7 +191,7 @@ class ClassApp extends React.Component {
                 numOfTotalChoicesForCurrentColor++;
         });
         if(this.state.finishedItemIndexes.length == numOfTotalChoicesForCurrentColor) {
-            this.setState({ transitioning: true }, () => setTimeout(() => this.setState({ transitioning: false, stateMachine: this.state.stateMachine+1, finishedItemIndexes: [] }, cb), 2000));
+            this.setState({ transitioning: true, trueLength: numOfTotalChoicesForCurrentColor }, () => setTimeout(() => this.setState({ transitioning: false, stateMachine: this.state.stateMachine+1, finishedItemIndexes: [] }, cb), 2000));
         } else {
             if(typeof cb == 'function')
                 cb();
@@ -198,40 +265,43 @@ class ClassApp extends React.Component {
         else if(this.state.stateMachine == AppStates.DO_GAME)
             return <div className="bucket-main">
                 <Background/>
-                <Typography variant="h4" gutterBottom align='center'>
+                <Typography variant="h4" gutterBottom align='center' className='toy-information'>
                     {this.state.transitioning ? 'Nice work!' : `Click on the ${retrieveColorOptionForIndex(this.props.color)[1]}${window.globalGameInformation.itemsPlural}.`}
                 </Typography>
-                <div className="bucket-main" style={{ flexGrow: 1 }}>
-                    <Bucket color={retrieveColorOptionForIndex(this.props.color)[0]} size={this.state.finishedItemIndexes.length} />
+                <div className="bucket-main">
+                    <Bucket ref={(ref) => globalBucket = ref} color={retrieveColorOptionForIndex(this.props.color)[0]} size={this.state.trueLength} />
                     <div className="bucket-toys">
-                        {(() => {
-                            var toysArray = [];
-                            window.globalGameInformation.items.forEach((item, i) => {
-                                toysArray.push(
-                                    <Item xOffset={this.state.itemXOffsets[i]} yOffset={this.state.itemYOffsets[i]} disabled={this.state.processing} doDisplay={this.state.finishedItemIndexes.indexOf(i) == -1} item={item} key={i} onClick={() => {
-                                        this.setState({ processing: true }, () => {
-                                            const reqColor = retrieveColorOptionForIndex(this.props.color)[0];
-                                            if(item.value.color != undefined && item.value.color != reqColor) {
-                                                this.replaySound(this.state.incorrectSound);
-                                                this.setState({ processing: false });
-                                                return;
-                                            } else {
-                                                const newArray = this.state.finishedItemIndexes.slice();
-                                                console.log(i);
-                                                newArray.push(i);
-                                                this.setState({ finishedItemIndexes: newArray }, () => {
-                                                    this.replaySound(this.state.correctSound);
-                                                    this.checkIfReachedEndOfColor(() => {
-                                                        this.setState({ processing: false });
-                                                    });
-                                                });
-                                            }
-                                        });
-                                    }}/>
-                                );
-                            });
-                            return toysArray;
-                        })()}
+                        <div className="floor-background" style={{backgroundImage: `url(${window.globalGameInformation.floorBackground})`}}></div>
+                        <div className="toy-container">
+                            {(() => {
+                                var toysArray = [];
+                                window.globalGameInformation.items.forEach((item, i) => {
+                                    toysArray.push(
+                                        <Item xOffset={this.state.itemXOffsets[i]} yOffset={this.state.itemYOffsets[i]} disabled={this.state.processing} doDisplay={this.state.finishedItemIndexes.indexOf(i) == -1} item={item} key={i} onClick={() => {
+                                            this.setState({ processing: true }, () => {
+                                                const reqColor = retrieveColorOptionForIndex(this.props.color)[0];
+                                                if(item.value.color != undefined && item.value.color != reqColor) {
+                                                    this.replaySound(this.state.incorrectSound);
+                                                    this.setState({ processing: false });
+                                                    return;
+                                                } else {
+                                                    const newArray = this.state.finishedItemIndexes.slice();
+                                                    console.log(i);
+                                                    newArray.push(i);
+                                                    this.setState({ finishedItemIndexes: newArray });
+                                                }
+                                            });
+                                        }} onMovedToBucket={() => {
+                                            this.replaySound(this.state.correctSound);
+                                            this.checkIfReachedEndOfColor(() => {
+                                                this.setState({ processing: false, trueLength: this.state.finishedItemIndexes.length });
+                                            });
+                                        }}/>
+                                    );
+                                });
+                                return toysArray;
+                            })()}
+                        </div>
                     </div>
                 </div>
             </div>;
